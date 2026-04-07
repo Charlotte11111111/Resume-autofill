@@ -1,0 +1,76 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>AI Resume Autofill</title>
+    <link rel="stylesheet" href="../styles/common.css" />
+    <link rel="stylesheet" href="./popup.css" />
+  </head>
+  <body class="ui-b">
+    <main class="app">
+      <header class="hero">
+        <div class="hero-row">
+          <h1 data-i18n="title">简历填写</h1>
+        </div>
+        <p data-i18n="subtitle">上传简历文件，并在招聘页面自动识别与填写字段。</p>
+      </header>
+
+      <section class="card">
+        <h2 data-i18n="apiSettings">API Settings</h2>
+        <div class="saved-api">
+          <label data-i18n="savedApis">Saved APIs</label>
+          <div class="saved-api-row">
+            <select id="savedApiSelect">
+              <option value="" data-i18n="noSavedProfile">No saved profile</option>
+            </select>
+            <button id="deleteApiProfile" class="btn ghost" type="button" data-i18n="deleteBtn">Delete</button>
+          </div>
+        </div>
+        <div class="grid">
+          <label data-i18n="provider">Provider</label>
+          <select id="provider">
+            <option value="openai" data-i18n="providerOpenai">OpenAI Compatible</option>
+            <option value="claude" data-i18n="providerClaude">Claude Compatible</option>
+            <option value="gemini" data-i18n="providerGemini">Gemini Compatible</option>
+            <option value="kimi" data-i18n="providerKimi">Kimi Compatible</option>
+            <option value="minimax" data-i18n="providerMinimax">MiniMax Compatible</option>
+            <option value="glm" data-i18n="providerGlm">GLM Compatible</option>
+          </select>
+          <label data-i18n="baseUrl">Base URL</label>
+          <input id="baseUrl" data-i18n-placeholder="baseUrlPlaceholder" placeholder="https://api.openai.com/v1" />
+          <label data-i18n="model">Model</label>
+          <input id="model" data-i18n-placeholder="modelPlaceholder" placeholder="gpt-4o-mini" />
+          <label data-i18n="apiKey">API Key</label>
+          <input id="apiKey" type="password" data-i18n-placeholder="apiKeyPlaceholder" placeholder="sk-..." />
+        </div>
+        <button id="saveSettings" class="btn primary" data-i18n="saveSettings">Save Settings</button>
+      </section>
+
+      <section class="card">
+        <h2 data-i18n="uploadResume">Upload Resume</h2>
+        <label class="dropzone" for="resumeFile">
+          <input id="resumeFile" type="file" accept=".pdf,.docx" multiple />
+          <span data-i18n="dropzoneHint">Drop or click to upload PDF / DOCX</span>
+        </label>
+        <div id="fileList" class="file-list"></div>
+        <button id="parseResume" class="btn" data-i18n="parseAndSave">Parse and Save</button>
+      </section>
+
+      <section class="card">
+        <h2 data-i18n="currentArchive">Current Archive</h2>
+        <textarea id="resumePreview" rows="10"></textarea>
+        <div class="resume-actions">
+          <button id="formatResume" class="btn ghost" type="button" data-i18n="formatJson">Format JSON</button>
+          <button id="saveResumeDraft" class="btn primary" type="button" data-i18n="saveCurrentArchive">Save Current Archive</button>
+        </div>
+        <button id="openAutofill" class="btn primary" data-i18n="openAutofillOnPage">Open Autofill on Current Page</button>
+      </section>
+
+      <p id="status" class="status"></p>
+    </main>
+    <script src="../lib/pdf.min.js"></script>
+    <script src="../lib/mammoth.browser.min.js"></script>
+    <script type="module" src="./popup.js"></script>
+  </body>
+</html>

@@ -1,0 +1,29 @@
+{
+  "manifest_version": 3,
+  "name": "简历填写",
+  "description": "上传简历文件，并在招聘页面自动识别与填写字段。",
+  "version": "0.1.0",
+  "permissions": ["storage", "activeTab", "scripting", "tabs"],
+  "host_permissions": ["http://*/*", "https://*/*"],
+  "background": {
+    "service_worker": "background/background.js",
+    "type": "module"
+  },
+  "action": {
+    "default_popup": "popup/popup.html"
+  },
+  "content_scripts": [
+    {
+      "matches": ["http://*/*", "https://*/*"],
+      "js": ["content/content.js"],
+      "css": ["content/content.css"],
+      "run_at": "document_idle"
+    }
+  ],
+  "web_accessible_resources": [
+    {
+      "resources": ["styles/common.css", "content/content.css"],
+      "matches": ["http://*/*", "https://*/*"]
+    }
+  ]
+}
