@@ -207,7 +207,7 @@ function isProjectsSectionHint(sectionHint) {
 }
 
 function isWorkSectionHint(sectionHint) {
-  return containsAny(sectionHint, ["workexperience", "work", "工作"]);
+  return containsAny(sectionHint, ["workexperience", "work", "工作", "实习", "经验"]);
 }
 
 function isEducationSectionHint(sectionHint) {
@@ -228,7 +228,7 @@ function resolveSectionFromHints(hints, sectionHint) {
     return "education";
   }
   if (
-    containsAny(hints, ["工作", "公司", "岗位", "职务", "职位", "work"]) ||
+    containsAny(hints, ["工作", "公司", "岗位", "职务", "职位", "work", "实习"]) ||
     isWorkSectionHint(sectionHint)
   ) {
     return "work";
@@ -291,18 +291,18 @@ function scoreSectionBySignals(signals) {
   for (const signal of signals || []) {
     if (!signal) continue;
 
-    if (containsAny(signal, ["\u516c\u53f8", "company", "\u804c\u52a1", "\u804c\u4f4d", "\u5c97\u4f4d"])) {
+    if (containsAny(signal, ["\u516c\u53f8", "company", "\u804c\u52a1", "\u804c\u4f4d", "\u5c97\u4f4d", "\u5b9e\u4e60", "\u7ecf\u9a8c", "\u5de5\u4f5c"])) {
       scores.work += 2;
     }
-    if (containsAny(signal, ["\u5de5\u4f5c\u63cf\u8ff0", "\u804c\u52a1\u63cf\u8ff0"])) {
+    if (containsAny(signal, ["\u5de5\u4f5c\u63cf\u8ff0", "\u804c\u52a1\u63cf\u8ff0", "\u63cf\u8ff0", "\u63cf\u8ff0", "\u5c97\u4f4d\u63cf\u8ff0"])) {
       scores.work += 2;
     }
 
-    if (containsAny(signal, ["\u5b66\u6821", "school", "\u5b66\u5386", "\u5b66\u4f4d", "\u4e13\u4e1a", "major", "degree"])) {
+    if (containsAny(signal, ["\u5b66\u6821", "school", "\u5b66\u5386", "\u5b66\u4f4d", "\u4e13\u4e1a", "major", "degree", "\u6559\u80b2"])) {
       scores.education += 2;
     }
 
-    if (containsAny(signal, ["\u9879\u76ee", "project", "\u9879\u76ee\u540d\u79f0", "\u9879\u76ee\u63cf\u8ff0", "\u9879\u76ee\u804c\u8d23"])) {
+    if (containsAny(signal, ["\u9879\u76ee", "project", "\u9879\u76ee\u540d\u79f0", "\u9879\u76ee\u63cf\u8ff0", "\u9879\u76ee\u804c\u8d23", "\u4f5c\u54c1"])) {
       scores.projects += 2;
     }
   }
@@ -342,9 +342,9 @@ function detectSectionHint(element) {
   }
 
   const strongTokens = {
-    projects: ["项目名称", "项目描述", "项目职责", "项目角色", "projectname", "projectdescription"],
-    work: ["公司名称", "职务", "职位", "岗位", "工作描述", "workexperience"],
-    education: ["学校全称", "学历", "学位", "专业", "education"]
+    projects: ["项目名称", "项目描述", "项目职责", "项目角色", "projectname", "projectdescription", "作品集", "项目经验"],
+    work: ["公司名称", "公司", "职务", "职位", "岗位", "工作描述", "实习描述", "workexperience", "工作经历", "实习经历", "经验"],
+    education: ["学校全称", "学历", "学位", "专业", "education", "教育背景"]
   };
   node = element;
   for (let i = 0; i < 6 && node; i += 1) {
@@ -405,19 +405,22 @@ function classifyFieldExplicit(field, sectionHintForResolve) {
   const hints = `${label}|${normalizeText(field?.name || "")}|${normalizeText(field?.id || "")}|${placeholder}`;
 
   if (containsAny(hints, ["项目名称", "projectname"])) return { section: "projects", property: "name" };
-  if (containsAny(hints, ["项目角色", "项目职责", "projectrole"])) {
+  if (containsAny(hints, ["项目角色", "项目职责", "projectrole", "职责", "responsibility"])) {
     return { section: "projects", property: "role" };
   }
   if (containsAny(hints, ["项目描述", "projectdescription"])) {
     return { section: "projects", property: "description" };
   }
-
-  if (containsAny(hints, ["职责描述", "description"])) {
+  // 单独"描述"字段，根据上下文推断section
+  if (containsAny(hints, ["描述"])) {
     const section = resolveSectionFromHints(hints, sectionHintForResolve);
-    return { section, property: "description" };
+    if (section) return { section, property: "description" };
   }
 
-  if (containsAny(hints, ["职务描述", "工作描述", "岗位描述"])) {
+  if (containsAny(hints, ["职责描述", "工作职责", "responsibilities"])) {
+    return { section: "work", property: "description" };
+  }
+  if (containsAny(hints, ["职务描述", "工作描述", "岗位描述", "description"])) {
     return { section: "work", property: "description" };
   }
   if (containsAny(hints, ["公司", "company"])) return { section: "work", property: "company" };
@@ -440,10 +443,13 @@ function classifyFieldExplicit(field, sectionHintForResolve) {
 
   if (containsAny(hints, ["邮箱", "email"])) return { section: "basic", property: "email" };
   if (containsAny(hints, ["手机", "电话", "phone", "mobile"])) return { section: "basic", property: "phone" };
-  if (containsAny(hints, ["姓名", "name"])) return { section: "basic", property: "fullName" };
+  if (containsAny(hints, ["姓名", "name", "姓名", "名字"])) return { section: "basic", property: "fullName" };
   if (containsAny(hints, ["github"])) return { section: "basic", property: "github" };
-  if (containsAny(hints, ["linkedin"])) return { section: "basic", property: "linkedIn" };
-  if (containsAny(hints, ["网站", "主页", "website"])) return { section: "basic", property: "website" };
+  if (containsAny(hints, ["linkedin", "领英"])) return { section: "basic", property: "linkedIn" };
+  if (containsAny(hints, ["网站", "主页", "website", "个人网站", "博客"])) return { section: "basic", property: "website" };
+  // 城市/地址
+  if (containsAny(hints, ["城市", "城市", "city", "所在地", "居住地"])) return { section: "basic", property: "city" };
+  if (containsAny(hints, ["地址", "address"])) return { section: "basic", property: "address" };
   return { section: "", property: "" };
 }
 
