@@ -18,6 +18,10 @@ let editingProfileId = "";
 
 // Provider 默认配置
 const PROVIDER_DEFAULTS = {
+  gotoken: {
+    baseUrl: "https://api.gotoken.top/v1",
+    model: "MiniMax-M2.7-highspeed"
+  },
   openai: {
     baseUrl: "https://api.openai.com/v1",
     model: "gpt-4o-mini"
@@ -69,6 +73,7 @@ const I18N = {
     createNewProfile: "新建配置...",
     deleteBtn: "删除",
     provider: "Provider",
+    providerGotoken: "Gotoken（MiniMax）",
     providerOpenai: "OpenAI 兼容",
     providerClaude: "Claude 兼容",
     providerGemini: "Gemini 兼容",
@@ -146,6 +151,7 @@ const I18N = {
     createNewProfile: "Create New Profile...",
     deleteBtn: "Delete",
     provider: "Provider",
+    providerGotoken: "Gotoken (MiniMax)",
     providerOpenai: "OpenAI Compatible",
     providerClaude: "Claude Compatible",
     providerGemini: "Gemini Compatible",
@@ -482,9 +488,9 @@ async function parseFileToText(file) {
 
 function fillSettings(settings) {
   if (!settings) return;
-  $("#provider").value = settings.provider || "openai";
-  $("#baseUrl").value = settings.baseUrl || "https://api.openai.com/v1";
-  $("#model").value = settings.model || "gpt-4o-mini";
+  $("#provider").value = settings.provider || "gotoken";
+  $("#baseUrl").value = settings.baseUrl || "https://api.gotoken.top/v1";
+  $("#model").value = settings.model || "MiniMax-M2.7-highspeed";
   $("#apiKey").value = settings.apiKey || "";
 }
 
@@ -672,9 +678,9 @@ savedApiSelect.addEventListener("change", async () => {
   if (value === "__new__") {
     editingProfileId = "";
     fillSettings({
-      provider: "openai",
-      baseUrl: "https://api.openai.com/v1",
-      model: "gpt-4o-mini",
+      provider: "gotoken",
+      baseUrl: "https://api.gotoken.top/v1",
+      model: "MiniMax-M2.7-highspeed",
       apiKey: ""
     });
     setStatusByKey("statusNewProfileMode");
@@ -714,15 +720,8 @@ providerSelect.addEventListener("change", () => {
   const provider = providerSelect.value;
   const defaults = PROVIDER_DEFAULTS[provider];
   if (defaults) {
-    // 只有当字段为空时才自动填充默认值
-    const baseUrlInput = $("#baseUrl");
-    const modelInput = $("#model");
-    if (!baseUrlInput.value.trim()) {
-      baseUrlInput.value = defaults.baseUrl;
-    }
-    if (!modelInput.value.trim()) {
-      modelInput.value = defaults.model;
-    }
+    $("#baseUrl").value = defaults.baseUrl;
+    $("#model").value = defaults.model;
   }
 });
 
@@ -735,7 +734,15 @@ async function init() {
       apiProfiles = settingsRes.data?.profiles || [];
       activeProfileId = settingsRes.data?.activeProfileId || "";
       renderApiProfiles();
-      if (!apiProfiles.length) savedApiSelect.value = "__new__";
+      if (!apiProfiles.length) {
+        savedApiSelect.value = "__new__";
+        fillSettings({
+          provider: "gotoken",
+          baseUrl: "https://api.gotoken.top/v1",
+          model: "MiniMax-M2.7-highspeed",
+          apiKey: ""
+        });
+      }
     }
     await refreshResume();
     setStatusByKey("statusReady");

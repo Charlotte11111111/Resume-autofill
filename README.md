@@ -174,7 +174,7 @@
 Step 1: 安装插件
     ↓
 Step 2: 配置 AI API（只需配置一次）
-    ├── 选择 AI 提供商（支持 OpenAI/MiniMax/Kimi 等）
+    ├── 默认选择 Gotoken（MiniMax M2.7 Fast）
     ├── 填入 API Key
     └── 点击保存
     ↓
@@ -212,9 +212,9 @@ Step 4: 在悬浮面板中
 ├─────────────────────────────────────┤
 │  API 设置                            │
 │  ┌─────────────────────────────┐   │
-│  │ Provider: [MiniMax ▼]        │   │
-│  │ Base URL: api.minimax.chat   │   │
-│  │ Model: MiniMax-M2.7          │   │
+│  │ Provider: [Gotoken ▼]        │   │
+│  │ Base URL: api.gotoken.top/v1 │   │
+│  │ Model: MiniMax-M2.7-highspeed│   │
 │  │ API Key: ••••••••••••        │   │
 │  └─────────────────────────────┘   │
 │  [保存设置]                          │
@@ -369,22 +369,23 @@ Step 4: 在悬浮面板中
 
 | 提供商 | Base URL | 模型 | 特点 |
 |--------|----------|------|------|
+| **Gotoken（默认）** | `https://api.gotoken.top/v1` | `MiniMax-M2.7-highspeed` | 快速、OpenAI 兼容 |
 | **MiniMax** | `https://api.minimax.chat` | `MiniMax-M2.7` | 国产模型，性价比高 |
 | **Kimi** | `https://api.moonshot.cn/v1` | `moonshot-v1-8k` | 支持长上下文 |
 | **GLM** | `https://open.bigmodel.cn/api/paas/v4` | `glm-4-flash` | 国产高性能模型 |
 | **OpenAI** | `https://api.openai.com/v1` | `gpt-4o-mini` | 官方模型 |
 | **Claude** | `https://api.anthropic.com/v1` | `claude-sonnet-4-20250514` | Anthropic 模型 |
 
-### 6.1 MiniMax 配置示例
+### 6.1 Gotoken 配置示例
 
 ```
-Provider: MiniMax 兼容
-Base URL: https://api.minimax.chat
-Model: MiniMax-M2.7
-API Key: 您的 MiniMax API Key
+Provider: Gotoken（MiniMax）
+Base URL: https://api.gotoken.top/v1
+Model: MiniMax-M2.7-highspeed
+API Key: 您的 Gotoken API Key
 ```
 
-> **提示**：MiniMax 提供免费额度，适合个人用户日常使用。
+> **安全提示**：API Key 保存在本机 `chrome.storage.local`，不会注入招聘网页，但可被扩展调试工具读取。请勿将 Key 写入源码或提交到 GitHub。
 
 ---
 
@@ -426,7 +427,7 @@ A: 尝试刷新扩展（chrome://extensions/ → 刷新按钮），然后重新�
 A: 检查 API Key 是否正确，是否已过期。
 
 **Q: API 调用失败 (404)**
-A: 检查 Base URL 是否正确。正确格式：`https://api.minimax.chat`，错误格式：`https://api.minimax.chat/v1/text/chatcompletion_v2`（路径会自动拼接）。
+A: 使用 Gotoken 时确认 Base URL 为 `https://api.gotoken.top/v1`，不要手动添加 `/chat/completions`。
 
 **Q: API 调用成功但返回为空**
 A: 可能是模型名称错误，请确认使用的模型名称与 AI 提供商后台显示一致。

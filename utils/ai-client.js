@@ -70,7 +70,7 @@ async function aiChat(messages, temperature = 0.1) {
   }
 
   const baseUrl = (settings.baseUrl || "").replace(/\/+$/, "");
-  const provider = settings.provider || "openai";
+  const provider = settings.provider || "gotoken";
 
   // MiniMax 使用特殊的 endpoint
   const endpoint = provider === "minimax"
@@ -78,7 +78,7 @@ async function aiChat(messages, temperature = 0.1) {
     : `${baseUrl}/chat/completions`;
 
   const body = {
-    model: settings.model || "gpt-4o-mini",
+    model: settings.model || "MiniMax-M2.7-highspeed",
     messages,
     temperature
   };

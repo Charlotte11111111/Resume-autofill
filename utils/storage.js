@@ -6,10 +6,10 @@ const KEYS = {
 };
 
 const DEFAULT_PROFILE = {
-  provider: "openai",
+  provider: "gotoken",
   apiKey: "",
-  baseUrl: "https://api.openai.com/v1",
-  model: "gpt-4o-mini"
+  baseUrl: "https://api.gotoken.top/v1",
+  model: "MiniMax-M2.7-highspeed"
 };
 
 function getFromStorage(keys) {
